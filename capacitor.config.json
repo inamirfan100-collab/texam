@@ -1,0 +1,6 @@
+{
+  "appId": "com.texam.mobile",
+  "appName": "Texam Premium",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
