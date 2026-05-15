@@ -4,39 +4,54 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-apk:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
-      - name: Install web dependencies
-        run: npm ci
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Vite App
+        run: npm run build
 
       - name: Install Capacitor
         run: npm install @capacitor/core @capacitor/cli @capacitor/android
 
-      - name: Build web app
-        run: npm run build
+      # ✅ FIX: DO NOT INIT CAPACITOR IN CI
+      # We assume config already exists
 
-      - name: Initialize Capacitor
-        run: npx cap init "Texam Premium" "com.example.texam" --web-dir=dist --npm-client npm
+      - name: Copy Web to Capacitor
+        run: npx cap copy
 
-      - name: Add Android platform
-        run: npx cap add android
+      - name: Add Android Platform (safe check)
+        run: npx cap add android || true
 
       - name: Sync Capacitor
         run: npx cap sync android
 
-      - name: Build debug APK
-        run: cd android && ./gradlew assembleDebug
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Make Gradle executable
+        run: |
+          cd android
+          chmod +x gradlew
+
+      - name: Build APK
+        run: |
+          cd android
+          ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
