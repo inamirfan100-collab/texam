@@ -1,6 +1,10 @@
-{
-  "appId": "com.texam.mobile",
-  "appName": "Texam Premium",
-  "webDir": "dist",
-  "bundledWebRuntime": false
-}
+import { CapacitorConfig } from '@capacitor/cli';
+
+const config: CapacitorConfig = {
+  appId: 'com.texam.mobile',
+  appName: 'Texam Premium',
+  webDir: 'dist',
+  bundledWebRuntime: false
+};
+
+export default config;
